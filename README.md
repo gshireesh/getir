@@ -12,5 +12,3 @@ yarn
 2. to start application: yarn run start
 3. to test: yarn run test
 
-
-What can i do to improve 
