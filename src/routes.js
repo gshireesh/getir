@@ -21,15 +21,22 @@ router.post("/records", async (req, res) => {
     const query = {}
     try {
         if (startDate) {
+            if (!Date.parse(startDate)) {
+                throw Exception("startDate should be Date") 
+            }
             query.createdAt = query.createdAt || {}
             query.createdAt['$gte'] = new Date(startDate)
         }
         if (endDate) {
-            query.createdAt = query.createdAt || {}
-            query.createdAt['$lt'] = new Date(endDate)
-            if (startDate && query.createdAt['$gte'] < query.createdAt['$lt']) {
+            if (!Date.parse(endDate)) {
+                throw Exception("endDate should be Date") 
+            }
+            date = new Date(endDate)
+            if (startDate && query.createdAt['$gte'] > date) {
                 throw Exception("startDate shouldnt be greater than endDate") 
             }
+            query.createdAt = query.createdAt || {}
+            query.createdAt['$lt'] = date
         }
 
         if (minCount) {
