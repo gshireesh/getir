@@ -30,7 +30,7 @@ test('check api with invalid date', async () => {
     expect(response.statusCode).toBe(400);
 })
 
-test('check api with start and end date', async () => {
+test('check api with start and end date where start > end', async () => {
     body = {
         "startDate": "2016-01-26",
         "endDate": "2016-01-25",
@@ -56,7 +56,7 @@ test('check api with min not int', async () => {
     expect(response.statusCode).toBe(400);
 })
 
-test('check api with min and max count', async () => {
+test('check api with min and max count where min > max', async () => {
     body = {
         "startDate": "2016-01-26",
         "endDate": "2016-01-29",
