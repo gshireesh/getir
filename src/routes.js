@@ -17,28 +17,44 @@ router.post("/records", async (req, res) => {
     // const count = await Record.count()
     // console.log(count)
     const {startDate, endDate, minCount, maxCount} = req.body
-
-    const query = {}
-    
-    if (startDate) {
-        query.createdAt = query.createdAt || {}
-        query.createdAt['$gte'] = new Date(startDate)
-    }
-    if (endDate) {
-        query.createdAt = query.createdAt || {}
-        query.createdAt['$lt'] = new Date(endDate)
-    }
-
-    if (minCount) {
-        query.totalCount = query.totalCount || {}
-        query.totalCount['$gte'] = minCount
-    }
-
-    if (maxCount) {
-        query.totalCount = query.totalCount || {}
-        query.totalCount['$lt'] = maxCount
-    }
     response = new ResponseBuilder()
+    const query = {}
+    try {
+        if (startDate) {
+            query.createdAt = query.createdAt || {}
+            query.createdAt['$gte'] = new Date(startDate)
+        }
+        if (endDate) {
+            query.createdAt = query.createdAt || {}
+            query.createdAt['$lt'] = new Date(endDate)
+            if (startDate && query.createdAt['$gte'] < query.createdAt['$lt']) {
+                throw Exception("startDate shouldnt be greater than endDate") 
+            }
+        }
+
+        if (minCount) {
+            if (isNaN(minCount)) {
+                throw Exception("minCount shouldnt be integer") 
+            }
+            query.totalCount = query.totalCount || {}
+            query.totalCount['$gte'] = minCount
+        }
+
+        if (maxCount) {
+            if (isNaN(maxCount)) {
+                throw Exception("maxCount shouldnt be integer") 
+            }
+            if (minCount && parseInt(minCount) > parseInt(maxCount)) {
+                throw Exception("minCount shouldnt be greater than maxCount") 
+            }
+            query.totalCount = query.totalCount || {}
+            query.totalCount['$lt'] = maxCount
+        }
+    } catch(err) {
+        response.error(err.message)
+        res.send(response)
+        return
+    }
     try {
         const results = await Record.aggregate([
             {
