@@ -1,12 +1,19 @@
 require("jest")
+require("dotenv").config()
 const mongoose = require("mongoose")
 const ResponseBuilder = require("./response_builder")
+const Record = require("./models/record")
+const { expect } = require("@jest/globals")
 
+beforeAll(async () => {
+    // Connect to a Mongo DB
+    await mongoose.connect(process.env.DB_URL)
+});
 
-// beforeAll(async () => {
-//     // Connect to a Mongo DB
-//     await mongoose.connect()
-// });
+test('check db fetch response', async () => {
+    const count = await Record.count()
+    expect(count).toBeGreaterThan(0)
+})
 
 test('check success response', () => {
     const resp = new ResponseBuilder()
@@ -19,3 +26,8 @@ test('check failure response', () => {
     resp.error()
     expect(JSON.stringify(resp)).toBe('{"code":1,"msg":"Error"}')
 })
+
+afterAll(async () => {
+    // Connect to a Mongo DB
+    await mongoose.disconnect()
+});
