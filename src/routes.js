@@ -40,7 +40,7 @@ router.post("/records", async (req, res) => {
         }
 
         if (minCount) {
-            if (isNaN(minCount)) {
+            if (typeof(minCount) != "number") {
                 throw new Error("minCount shouldnt be integer") 
             }
             query.totalCount = query.totalCount || {}
@@ -48,7 +48,7 @@ router.post("/records", async (req, res) => {
         }
 
         if (maxCount) {
-            if (isNaN(maxCount)) {
+            if (typeof(maxCount) != "number") {
                 throw new Error("maxCount shouldnt be integer") 
             }
             if (minCount && parseInt(minCount) > parseInt(maxCount)) {
@@ -59,7 +59,7 @@ router.post("/records", async (req, res) => {
         }
     } catch(err) {
         response.error(err.message)
-        res.send(response)
+        res.status(400).send(response)
         return
     }
     try {
@@ -82,6 +82,7 @@ router.post("/records", async (req, res) => {
         
     } catch (err) {
         response.error(err.message)
+        res.status(406)
     } finally {
         res.send(response)
     }
