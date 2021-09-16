@@ -22,18 +22,18 @@ router.post("/records", async (req, res) => {
     try {
         if (startDate) {
             if (!Date.parse(startDate)) {
-                throw Exception("startDate should be Date") 
+                throw new Error("startDate should be Date") 
             }
             query.createdAt = query.createdAt || {}
             query.createdAt['$gte'] = new Date(startDate)
         }
         if (endDate) {
             if (!Date.parse(endDate)) {
-                throw Exception("endDate should be Date") 
+                throw new Error("endDate should be Date") 
             }
             date = new Date(endDate)
             if (startDate && query.createdAt['$gte'] > date) {
-                throw Exception("startDate shouldnt be greater than endDate") 
+                throw new Error("startDate shouldnt be greater than endDate") 
             }
             query.createdAt = query.createdAt || {}
             query.createdAt['$lt'] = date
@@ -41,7 +41,7 @@ router.post("/records", async (req, res) => {
 
         if (minCount) {
             if (isNaN(minCount)) {
-                throw Exception("minCount shouldnt be integer") 
+                throw new Error("minCount shouldnt be integer") 
             }
             query.totalCount = query.totalCount || {}
             query.totalCount['$gte'] = minCount
@@ -49,10 +49,10 @@ router.post("/records", async (req, res) => {
 
         if (maxCount) {
             if (isNaN(maxCount)) {
-                throw Exception("maxCount shouldnt be integer") 
+                throw new Error("maxCount shouldnt be integer") 
             }
             if (minCount && parseInt(minCount) > parseInt(maxCount)) {
-                throw Exception("minCount shouldnt be greater than maxCount") 
+                throw new Error("minCount shouldnt be greater than maxCount") 
             }
             query.totalCount = query.totalCount || {}
             query.totalCount['$lt'] = maxCount
